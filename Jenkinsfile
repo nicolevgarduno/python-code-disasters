@@ -1,27 +1,59 @@
 pipeline {
     agent any
+
+    environment {
+        SONAR_TOKEN = credentials('sonarqube-token-2') // Use your Jenkins SonarQube token
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git branch: 'main', url: 'https://github.com/nicolevgarduno/python-code-disasters.git'
             }
         }
+
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('MySonarServer') {
-                    sh 'sonar-scanner'
+                script {
+                    // Run SonarQube scanner
+                    sh "sonar-scanner -Dsonar.projectKey=CodeDisasters -Dsonar.sources=. -Dsonar.host.url=http://34.85.168.25 -Dsonar.login=${SONAR_TOKEN}"
                 }
             }
         }
-        stage('Quality Gate') {
+
+        stage('Check Quality Gate') {
             steps {
-                waitForQualityGate abortPipeline: true
+                script {
+                    timeout(time: 10, unit: 'MINUTES') {
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK') {
+                            error "Quality Gate failed: ${qg.status}"
+                        }
+                    }
+                }
             }
         }
-        stage('Hadoop Job') {
+/*
+        stage('Run Hadoop Job') {
             steps {
-                sh 'bash run_hadoop_job.sh'
+                script {
+                    // Replace with your Hadoop command
+                    sh "hadoop jar /path/to/hadoop-job.jar YourMainClass /input /output"
+                }
             }
+        }
+
+        stage('Display Results') {
+            steps {
+                sh "hdfs dfs -cat /output/*"
+            }
+        }
+*/
+    }
+    
+    post {
+        always {
+            echo "Pipeline finished"
         }
     }
 }
