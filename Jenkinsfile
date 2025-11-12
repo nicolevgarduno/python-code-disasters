@@ -14,13 +14,18 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                script {
-                    // Run SonarQube scanner
-                    sh "sonar-scanner -Dsonar.projectKey=CodeDisasters -Dsonar.sources=. -Dsonar.host.url=http://34.85.168.25 -Dsonar.login=${SONAR_TOKEN}"
+                withSonarQubeEnv('MySonarServer') {
+                    script {
+                        def scannerHome = tool 'SonarScanner'
+                        sh "${scannerHome}/bin/sonar-scanner \
+                            -Dsonar.projectKey=CodeDisasters \
+                            -Dsonar.sources=. \
+                            -Dsonar.host.url=http://34.85.168.25 \
+                            -Dsonar.login=${SONAR_TOKEN}"
+                    }
                 }
             }
         }
-
         stage('Check Quality Gate') {
             steps {
                 script {
