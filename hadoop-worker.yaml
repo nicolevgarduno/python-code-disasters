@@ -1,31 +1,41 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Pod
 metadata:
-  name: hadoop-worker
+  name: hadoop-worker-1
   namespace: hadoop
 spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: hadoop-worker
-  template:
-    metadata:
-      labels:
-        app: hadoop-worker
-    spec:
-      containers:
-      - name: hadoop-worker
-        image: bde2020/hadoop-datanode:3.2.1-hadoop3.2.1-java8
-        ports:
-        - containerPort: 9864 
-        env:
-        - name: CORE_CONF_fs_defaultFS
-          value: hdfs://hadoop-master:9000
-        - name: HDFS_CONF_dfs_datanode_data_dir
-          value: /hadoop/dfs/data
-        volumeMounts:
+  containers:
+    - name: hadoop-worker
+      image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+      env:
+        - name: CLUSTER_NAME
+          value: "hadoop-cluster"
+        - name: NAMENODE
+          value: "hadoop-master"
+      volumeMounts:
         - name: hadoop-data
           mountPath: /hadoop/dfs/data
-      volumes:
-      - name: hadoop-data
-        emptyDir: {}
+  volumes:
+    - name: hadoop-data
+      emptyDir: {}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hadoop-worker-2
+  namespace: hadoop
+spec:
+  containers:
+    - name: hadoop-worker
+      image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+      env:
+        - name: CLUSTER_NAME
+          value: "hadoop-cluster"
+        - name: NAMENODE
+          value: "hadoop-master"
+      volumeMounts:
+        - name: hadoop-data
+          mountPath: /hadoop/dfs/data
+  volumes:
+    - name: hadoop-data
+      emptyDir: {}
