@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/nicolevgarduno/python-code-disasters.git'
+                git branch: 'master', url: 'https://github.com/nicolevgarduno/python-code-disasters.git'
             }
         }
 
