@@ -68,7 +68,10 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
-.terraform/
+terraform/.terraform
+terraform/hadoop/.terraform
+terraform/jenkins/.terraform
+terraform/sonarqube/.terraform
 
 
 # PyInstaller
