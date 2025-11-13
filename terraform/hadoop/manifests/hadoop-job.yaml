@@ -1,0 +1,12 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hadoop-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: hadoop
+          image: bde2020/hadoop-base:2.0.0-hadoop2.7.4-java8
+          command: ["bash", "-c", "echo 'Hello from Hadoop container!'"]
+      restartPolicy: Never
