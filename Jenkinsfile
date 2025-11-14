@@ -1,5 +1,5 @@
 pipeline {
-    agent any  // run on the Jenkins node directly
+    agent { label 'jenkins/jenkins-agent' }
 
     environment {
         SONARQUBE_TOKEN = credentials('sonarqube-token') // your Jenkins credential ID
