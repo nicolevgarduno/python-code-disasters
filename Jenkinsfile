@@ -28,7 +28,7 @@ pipeline {
                         -Dsonar.projectKey=python-code-disasters \
                         -Dsonar.sources=. \
                         -Dsonar.host.url=$SONAR_HOST \
-                        -Dsonar.token=sqp_a1971b18b1a1d217d5fe3333f1d2b6223b02159b
+                        -Dsonar.token=sqp_c51043e7daa4a1b9fcbc92c9abb120472e90b829
 
                 '''
             }
