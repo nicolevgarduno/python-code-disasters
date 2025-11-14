@@ -1,4 +1,6 @@
 # my_first_calculator.py by AceLewis
+
+# CAN YOU SEE THIS COMMENT!?!
 # TODO: Make it work for all floating point numbers too
 
 if 3/2 == 1:  # Because Python 2 does not know maths

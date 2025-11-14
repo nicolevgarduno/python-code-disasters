@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: namenode
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hadoop-namenode
+  template:
+    metadata:
+      labels:
+        app: hadoop-namenode
+    spec:
+      containers:
+        - name: namenode
+          image: bde2020/hadoop-namenode:2.0.0-hadoop2.7.4-java8
+          ports:
+            - containerPort: 9870
+          env:
+            - name: CLUSTER_NAME
+              value: "hadoop-cluster"

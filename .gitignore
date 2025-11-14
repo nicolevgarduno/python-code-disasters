@@ -6,7 +6,8 @@
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
@@ -67,6 +68,11 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+terraform/.terraform
+terraform/hadoop/.terraform
+terraform/jenkins/.terraform
+terraform/sonarqube/.terraform
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
