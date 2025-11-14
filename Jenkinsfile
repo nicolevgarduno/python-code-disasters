@@ -1,8 +1,8 @@
 pipeline {
-    agent any  // use any available Jenkins node with the tools installed
+    agent any  // run on the Jenkins node directly
 
     environment {
-        SONARQUBE_TOKEN = credentials('sonarqube-token') // your SonarQube credential
+        SONARQUBE_TOKEN = credentials('sonarqube-token') // your Jenkins credential ID
     }
 
     stages {
@@ -15,7 +15,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
+                withSonarQubeEnv('SonarQube') { // your SonarQube server name
                     sh "sonar-scanner -Dsonar.login=${SONARQUBE_TOKEN}"
                 }
             }
@@ -31,7 +31,9 @@ pipeline {
 
         stage('Run Hadoop Job') {
             when {
-                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+                expression {
+                    return currentBuild.result == null || currentBuild.result == 'SUCCESS'
+                }
             }
             steps {
                 echo "Running Hadoop MapReduce job..."
