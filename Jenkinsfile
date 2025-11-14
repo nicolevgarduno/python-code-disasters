@@ -1,13 +1,13 @@
+
+
 pipeline {
     agent any
 
     environment {
         SONARQUBE_TOKEN = credentials('sonarqube-token')
-        SONAR_HOST = "http://136.107.36.122:9000"
     }
 
     stages {
-
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
@@ -17,20 +17,14 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                sh '''
-                    echo "[INFO] Downloading SonarScanner..."
-                    curl -L -o sonar.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
-                    unzip -o sonar.zip
-                    rm sonar.zip
-
-                    echo "[INFO] Running SonarScanner..."
-                    ./sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner \
-                        -Dsonar.projectKey=python-code-disasters \
-                        -Dsonar.sources=. \
-                        -Dsonar.host.url=$SONAR_HOST \
-                        -Dsonar.token=sqp_c51043e7daa4a1b9fcbc92c9abb120472e90b829
-
-                '''
+                echo "Running SonarScanner in Docker..."
+                sh """
+                    docker run --rm \
+                      -e SONAR_HOST_URL=http://136.107.36.122:9000 \
+                      -e SONAR_LOGIN=$sqp_c51043e7daa4a1b9fcbc92c9abb120472e90b829 \
+                      -v \$PWD:/usr/src \
+                      sonarsource/sonar-scanner-cli:latest
+                """
             }
         }
 
@@ -43,15 +37,31 @@ pipeline {
         }
 
         stage('Run Hadoop Job') {
+            when {
+                expression {
+                    currentBuild.result == null || currentBuild.result == 'SUCCESS'
+                }
+            }
             steps {
-                echo "Running Hadoop job..."
+                echo "Running Hadoop MapReduce job..."
                 sh '''
-                    hadoop fs -put -f . /user/jenkins/input/
-                    hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar \
-                        wordcount /user/jenkins/input /user/jenkins/output
+                    hadoop fs -put -f ./* /user/jenkins/input/
+                    hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar wordcount /user/jenkins/input /user/jenkins/output
                     hadoop fs -cat /user/jenkins/output/part-r-00000
                 '''
             }
+        }
+    }
+
+    post {
+        always {
+            echo "Pipeline finished. Check logs."
+        }
+        success {
+            echo "Pipeline SUCCESS!"
+        }
+        failure {
+            echo "Pipeline FAILED."
         }
     }
 }
