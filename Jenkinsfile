@@ -25,10 +25,11 @@ pipeline {
 
                     echo "Running SonarScanner..."
                     ./sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner \
-                        -Dsonar.projectKey=python-code-disasters \
-                        -Dsonar.sources=. \
-                        -Dsonar.host.url=$SONAR_HOST_URL \
-                        -Dsonar.login=$SONARQUBE_TOKEN
+                      -Dsonar.projectKey=python-code-disasters \
+                      -Dsonar.sources=. \
+                      -Dsonar.host.url=$SONAR_HOST_URL \
+                      -Dsonar.token=$SONARQUBE_TOKEN
+
                 '''
             }
         }
